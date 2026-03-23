@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Battle Royale | DSA Edition</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <h1>DICE <span>BATTLE</span></h1>
+            </div>
+            <div id="round-counter" class="round-badge" style="display: none;">ROUND 1/5</div>
+            <div class="header-status" id="match-status">Select Mode & Start Battle</div>
+            <div class="header-actions">
+                <button id="reset-btn" title="Reset Game">RESET</button>
+            </div>
+        </header>
+
+        <main>
+            <section class="arena-section">
+                <div class="battle-zones">
+                    <!-- Player 1 Zone -->
+                    <div id="player1-zone" class="player-zone active">
+                        <div class="zone-header">
+                            <span id="p1-display-name" class="player-name">Player 1</span>
+                            <span id="p1-score" class="player-score">0</span>
+                        </div>
+                        <div id="p1-dice-tray" class="dice-tray">
+                            <div class="empty-state">Waiting...</div>
+                        </div>
+                        <div class="total-label">Current Total</div>
+                        <div id="p1-total" class="total-display">0</div>
+                    </div>
+
+                    <!-- Player 2 Zone -->
+                    <div id="player2-zone" class="player-zone">
+                        <div class="zone-header">
+                            <span id="p2-display-name" class="player-name">Player 2</span>
+                            <span id="p2-score" class="player-score">0</span>
+                        </div>
+                        <div id="p2-dice-tray" class="dice-tray">
+                            <div class="empty-state">Waiting...</div>
+                        </div>
+                        <div class="total-label">Current Total</div>
+                        <div id="p2-total" class="total-display">0</div>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="controls-panel">
+                <div class="control-group">
+                    <h3>Game Mode</h3>
+                    <div class="mode-selector">
+                        <button id="mode-solo" class="mode-btn active">SOLO</button>
+                        <button id="mode-battle" class="mode-btn">BATTLE</button>
+                        <button id="mode-champ" class="mode-btn">CHAMPIONSHIP</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>Dice Type</h3>
+                    <div class="dice-grid">
+                        <button class="dice-btn active" data-type="d6">D6</button>
+                        <button class="dice-btn" data-type="d4">D4</button>
+                        <button class="dice-btn" data-type="d8">D8</button>
+                        <button class="dice-btn" data-type="d12">D12</button>
+                        <button class="dice-btn" data-type="d20">D20</button>
+                    </div>
+                </div>
+
+                <div class="dashboard">
+                    <div class="dashboard-tabs">
+                        <button class="dash-tab active" data-tab="history">HISTORY</button>
+                        <button class="dash-tab" data-tab="stats">STATS</button>
+                        <button class="dash-tab" data-tab="players">PLAYERS</button>
+                        <button class="dash-tab" data-tab="lab">DSA LAB</button>
+                    </div>
+
+                    <div id="dash-history" class="dash-content">
+                        <div id="match-history-list">
+                            <div class="empty-history">No matches yet</div>
+                        </div>
+                    </div>
+
+                    <div id="dash-stats" class="dash-content" style="display: none;">
+                        <div class="chart-container">
+                            <canvas id="roll-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div id="dash-players" class="dash-content" style="display: none;">
+                        <div id="player-history-list">
+                            <div class="empty-history">No players registered</div>
+                        </div>
+                    </div>
+
+                    <div id="dash-lab" class="dash-content" style="display: none;">
+                        <div class="lab-card">
+                            <div class="lab-title">Probability Calculator (Recursion)</div>
+                            <div class="lab-row">
+                                <input type="number" id="lab-n" class="lab-input" placeholder="Dice" value="2">
+                                <input type="number" id="lab-target" class="lab-input" placeholder="Sum" value="7">
+                                <button id="lab-calc" class="lab-btn">GO</button>
+                            </div>
+                            <div id="lab-result" style="margin-top: 10px; font-weight: 700;">Result: --%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="roll-btn-container">
+                    <button id="roll-btn" class="action-btn roll-btn">ROLL DICE</button>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <!-- Player Name Modal -->
+    <div id="name-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h2>Enter Player Names</h2>
+            <div class="input-group">
+                <label>Player 1</label>
+                <input type="text" id="p1-input" placeholder="e.g. Alex" maxlength="12">
+            </div>
+            <div class="input-group">
+                <label>Player 2</label>
+                <input type="text" id="p2-input" placeholder="e.g. Sam" maxlength="12">
+            </div>
+            <button id="start-battle-btn" class="lab-btn" style="width: 100%; padding: 12px; margin-top: 20px;">START
+                GAME</button>
+        </div>
+    </div>
+
+    <audio id="roll-sound" src="https://assets.mixkit.co/active_storage/sfx/2045/2045-preview.mp3"
+        preload="auto"></audio>
+    <script src="script.js"></script>
+</body>
+
+</html>
